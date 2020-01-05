@@ -5,28 +5,32 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
     use Notifiable;
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'token',
     ];
 
     protected $guarded = [];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+
+    public function generateToken()
+    {
+        $this->token = Str::random(60);
+        $this->save();
+        return $this->token;
+    }
+
+    public static function getByToken($token)
+    {
+        $found = User::where('token', $token)->first();
+        if($found->count() == 0)
+            return null;
+        else
+            return $found;
+    }
 }

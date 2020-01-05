@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ApiAuth;
+use App\Http\Middleware\CORSMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +42,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            CORSMiddleware::class,
         ],
     ];
 
@@ -60,6 +63,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'apiauth' => ApiAuth::class,
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\User;
 use Closure;
 
 class ApiAuth
@@ -9,12 +10,16 @@ class ApiAuth
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        $usr = User::getByToken($request->bearerToken());
+        if (!$usr)
+            return response()->json(['message' => 'You need authorization'])->setStatusCode(403, 'Forbidden');
+        else
+            return $next($request);
     }
 }

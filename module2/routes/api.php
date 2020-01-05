@@ -20,4 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/signup', 'Auth\RegisterController@register');
 
 Route::post('/login', 'Auth\LoginController@login');
-Route::post('/logout', 'Auth\LoginController@logout');
+
+Route::middleware('apiauth')->group(function () {
+    Route::post('/logout', 'Auth\LoginController@logout');
+    Route::post('/photo', 'PhotoController@upload');
+});

@@ -78,8 +78,13 @@ class RegisterController extends Controller
     {
         $vl = $this->validator($request->all());
 
-        if($vl->fails())
-            return response()->json($vl)->setStatusCode(422, 'Unprocessable entity');
+        if ($vl->fails()) {
+            $resp = [];
+            $vv = $vl->errors()->toArray();
+            foreach ($vv as $v_k => $v_v)
+                $resp[$v_k] = $v_v[0];
+            return response()->json($resp)->setStatusCode(422, 'Unprocessable entity');
+        }
 
         event(new Registered($user = $this->create($request->all())));
 

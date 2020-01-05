@@ -31,8 +31,9 @@ class PhotoController extends Controller
             'owner_id' => $user->id
         ]);
         $filename = 'original_' . $photo->id . '.' . $ph->getClientOriginalExtension();
+        $ph->move(base_path('/photo'), $filename);
         $photo->file = $filename;
         $photo->save();
-        return response()->json(['id' => $photo->id, 'name' => $photo->name, 'url' => asset($filename)])->setStatusCode(201, 'Created');
+        return response()->json(['id' => $photo->id, 'name' => 'Untitled', 'url' => asset('photo/' . $filename)])->setStatusCode(201, 'Created');
     }
 }

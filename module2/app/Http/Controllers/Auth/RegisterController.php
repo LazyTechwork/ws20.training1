@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Events\Registered;
+use App\User;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
 {
@@ -58,22 +57,6 @@ class RegisterController extends Controller
         ]);
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param array $data
-     * @return \App\User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'first_name' => $data['first_name'],
-            'surname' => $data['surname'],
-            'phone' => $data['phone'],
-            'password' => Hash::make($data['password']),
-        ]);
-    }
-
     public function register(Request $request)
     {
         $vl = $this->validator($request->all());
@@ -86,15 +69,15 @@ class RegisterController extends Controller
             return response()->json($resp)->setStatusCode(422, 'Unprocessable entity');
         }
 
-        event(new Registered($user = $this->create($request->all())));
+        $user = User::create([
+            'first_name' => $request->get('first_name'),
+            'surname' => $request->get('surname'),
+            'phone' => $request->get('phone'),
+            'password' => Hash::make($request->get('password'))
+        ]);
 
         $this->guard()->login($user);
 
-        return $this->registered($request, $user);
-    }
-
-    protected function registered(Request $request, $user)
-    {
         return response()->json(['id' => $user->id])->setStatusCode(201, 'Created');
     }
 }

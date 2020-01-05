@@ -66,4 +66,9 @@ class LoginController extends Controller
     {
         return 'phone';
     }
+
+    public function logout()
+    {
+        return response('', 200);
+    }
 }

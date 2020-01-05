@@ -24,4 +24,6 @@ Route::post('/login', 'Auth\LoginController@login');
 Route::middleware('apiauth')->group(function () {
     Route::post('/logout', 'Auth\LoginController@logout');
     Route::post('/photo', 'PhotoController@upload');
+
+    Route::match(['post', 'patch'], '/photo/{id}', 'PhotoController@photoChange');
 });

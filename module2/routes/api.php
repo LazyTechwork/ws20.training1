@@ -26,4 +26,5 @@ Route::middleware('apiauth')->group(function () {
     Route::post('/photo', 'PhotoController@upload');
 
     Route::match(['post', 'patch'], '/photo/{id}', 'PhotoController@photoChange');
+    Route::delete('/photo/{id}', 'PhotoController@delete');
 });

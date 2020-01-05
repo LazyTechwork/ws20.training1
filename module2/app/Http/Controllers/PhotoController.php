@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Photo;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -54,9 +55,19 @@ class PhotoController extends Controller
             return response('', 403);
         if ($request->has('name'))
             $photo->name = $request->get('name');
-        if($photo->isDirty())
+        if ($photo->isDirty())
             $photo->save();
 
-        return response()->json(['id'=>$photo->id, 'name'=>$photo->name, 'url'=>$photo->url()]);
+        return response()->json(['id' => $photo->id, 'name' => $photo->name, 'url' => $photo->url()]);
+    }
+
+    public function delete(Request $request, $id)
+    {
+        $photo = Photo::find($id);
+        $user = User::getByToken($request->bearerToken());
+        if ($photo->author->id !== $user->id)
+            return response('', 403);
+        File::delete(base_path('/photo/' . $photo->file));
+        return response('')->setStatusCode(204, 'Deleted');
     }
 }

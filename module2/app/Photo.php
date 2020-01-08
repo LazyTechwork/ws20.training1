@@ -15,6 +15,16 @@ class Photo extends Model
 
     public function url()
     {
-        return asset('photo/'.$this->file);
+        return asset('photo/' . $this->file);
     }
+
+    public function shared()
+    {
+        return $this->belongsToMany(User::class, 'shared');
+    }
+
+    /*public function hasAccess($user_id)
+    {
+        return $this->author->id == $user_id || $this->shared()->where('user_id', '=', $user_id)->count();
+    }*/
 }

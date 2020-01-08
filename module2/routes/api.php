@@ -13,16 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('/signup', 'Auth\RegisterController@register');
+Route::post('signup', 'Auth\RegisterController@register');
 
-Route::post('/login', 'Auth\LoginController@login');
+Route::post('login', 'Auth\LoginController@login');
 
 Route::middleware('apiauth')->group(function () {
-    Route::post('/logout', 'Auth\LoginController@logout');
-    Route::post('/photo', 'PhotoController@upload');
+    Route::post('logout', 'Auth\LoginController@logout');
+    Route::post('photo', 'PhotoController@upload');
 
-    Route::match(['post', 'patch'], '/photo/{id}', 'PhotoController@photoChange');
-    Route::delete('/photo/{id}', 'PhotoController@delete');
+    Route::match(['post', 'patch'], 'photo/{id}', 'PhotoController@photoChange');
+    Route::delete('photo/{id}', 'PhotoController@delete');
+    Route::get('photo', 'PhotoController@getPhoto');
+    Route::get('photo/{id}', 'PhotoController@getOne');
 
     Route::get('user', 'UserController@search');
+    Route::post('user/{id}/share', 'PhotoController@share');
 });

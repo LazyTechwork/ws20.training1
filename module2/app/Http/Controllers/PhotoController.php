@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PhotoResource;
 use App\Photo;
 use App\User;
 use Illuminate\Http\Request;
@@ -75,11 +76,35 @@ class PhotoController extends Controller
     {
         $user = User::getByToken($request->bearerToken());
         $photos = $user->photos;
-        $resp = [];
-        foreach ($photos as $photo) {
-            array_push($resp, ["id" => $photo->id, "name" => $photo->name, "owner_id" => $photo->owner_id, "url" => $photo->url(), "users" => []]);
+        $access = $user->access;
+        return response()->json(array_merge(PhotoResource::collection($photos)->toArray($request), PhotoResource::collection($access)->toArray($request)))->setStatusCode(200);
+    }
+
+    public function share(Request $request, $id)
+    {
+        $user = User::getByToken($request->bearerToken());
+        $uto = User::find($id);
+        $exist = [];
+        foreach ($request->get('photos') as $item) {
+            $eloq = Photo::find($item);
+            if (!$eloq)
+                continue;
+
+            if ($eloq->owner_id != $user->id)
+                continue;
+
+            if ($uto->access()->where('photo_id', '=', $item)->count())
+                $exist[] = $item;
+
+            $uto->access()->attach($item);
         }
 
-        return response()->json($resp)->setStatusCode(200);
+        return response()->json(['existing_photos' => $exist])->setStatusCode(201, 'Created');
+    }
+
+    public function getOne(Request $request, $id)
+    {
+        $photo = Photo::find($id);
+        return response()->json(PhotoResource::make($photo)->toArray($request))->setStatusCode(200);
     }
 }

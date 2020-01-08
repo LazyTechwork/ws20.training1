@@ -34,7 +34,7 @@ class PhotoController extends Controller
             'owner_id' => $user->id
         ]);
         $filename = 'original_' . $photo->id . '.' . $ph->getClientOriginalExtension();
-        $ph->move(base_path('/photo'), $filename);
+        $ph->move(base_path('/photos'), $filename);
         $photo->file = $filename;
         $photo->save();
         return response()->json(['id' => $photo->id, 'name' => 'Untitled', 'url' => $photo->url()])->setStatusCode(201, 'Created');
@@ -56,6 +56,13 @@ class PhotoController extends Controller
             return response('', 403);
         if ($request->has('name'))
             $photo->name = $request->get('name');
+        if ($request->has('photo')) {
+            $b64 = $request->get('photo');
+            $b64 = str_replace(' ', '+', explode(',', explode(';', $b64)[1])[1]);
+            $filename = 'edited_' . $photo->id . '.png';
+            File::put(base_path('photos/' . $filename), base64_decode($b64));
+            $photo->file = $filename;
+        }
         if ($photo->isDirty())
             $photo->save();
 

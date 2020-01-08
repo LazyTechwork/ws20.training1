@@ -19,7 +19,7 @@ class PhotoResource extends JsonResource
             "name" => $this->name,
             "owner_id" => $this->owner_id,
             "url" => $this->url(),
-            "users" => $this->access()->pluck('user_id')
+            "users" => $this->shared()->pluck('user_id')
         ];
     }
 }

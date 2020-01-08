@@ -15,7 +15,7 @@ class Photo extends Model
 
     public function url()
     {
-        return asset('photo/' . $this->file);
+        return asset('photos/' . $this->file);
     }
 
     public function shared()

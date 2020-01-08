@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/signup', 'Auth\RegisterController@register');
 
 Route::post('/login', 'Auth\LoginController@login');
@@ -27,4 +23,6 @@ Route::middleware('apiauth')->group(function () {
 
     Route::match(['post', 'patch'], '/photo/{id}', 'PhotoController@photoChange');
     Route::delete('/photo/{id}', 'PhotoController@delete');
+
+    Route::get('user', 'UserController@search');
 });

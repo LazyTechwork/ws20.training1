@@ -70,4 +70,16 @@ class PhotoController extends Controller
         File::delete(base_path('/photo/' . $photo->file));
         return response('')->setStatusCode(204, 'Deleted');
     }
+
+    public function getPhoto(Request $request)
+    {
+        $user = User::getByToken($request->bearerToken());
+        $photos = $user->photos;
+        $resp = [];
+        foreach ($photos as $photo) {
+            array_push($resp, ["id" => $photo->id, "name" => $photo->name, "owner_id" => $photo->owner_id, "url" => $photo->url(), "users" => []]);
+        }
+
+        return response()->json($resp)->setStatusCode(200);
+    }
 }
